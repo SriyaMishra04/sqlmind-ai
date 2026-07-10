@@ -1,144 +1,88 @@
-# GrowEasy AI CSV Importer
+# SQLMind AI - AI-Powered SQL Assistant
 
-An intelligent, production-ready AI-powered CSV lead importer that parses unstructured CSV files with varying columns and layouts, standardizes them to a target CRM lead schema using an LLM, and provides a premium user interface. 
-
-Built as a Software Developer Internship assignment with a completely decoupled architecture, robust error fallback paths, and dynamic dark mode design.
+SQLMind AI is an intelligent, premium full-stack SQL Assistant that translates natural language queries into optimized SQL statements, executes them securely against uploaded datasets, and displays visual charts and table results.
 
 ---
 
 ## 🚀 Key Features
 
-*   **Sleek SaaS Dashboard UI**: Designed following Vercel, Linear, and Stripe aesthetics with rounded cards, glassmorphism elements, custom grids, and smooth animations using Framer Motion.
-*   **Zero-Overhead Local Preview (Step 2)**: Parses CSV files locally in the browser using PapaParse. Renders a high-performance interactive grid utilizing TanStack Table supporting:
-    *   Sticky headers
-    *   Horizontal & vertical scroll virtualization
-    *   Global filtering & search
-    *   Column sorting
-    *   Drag-to-resize columns
-*   **Unified AI Extraction Adapter (Step 4)**: Maps unstructured columns (e.g., `fname`, `lname`, `cell`, `mail`) to 15 standard CRM lead fields using OpenAI SDK. Supports both OpenAI models (`gpt-4o-mini`) and Google Gemini models (`gemini-1.5-flash`) via environment variables.
-*   **Fail-Safe Heuristic Fallback**: Includes a regex key-matching engine that acts as a backup. If the LLM rate limits or fails, the importer falls back to heuristic mappings so import uploads never fail.
-*   **CRM Schema Validation**: Evaluates imported records against strict Zod validations (names, valid email syntax).
-*   **Import Analytics**: Renders metrics cards (Total Leads, Skipped Rows, Pipeline Execution Time) and detailed logs explaining validation issues for skipped rows.
-*   **JSON Exporter**: Allows downloading the structured output results as a JSON file.
+- **Multi-Provider LLM Integration**: Generates SQL using Google Gemini (default) or OpenAI GPT models.
+- **Visual Dashboard**: Seamless, dark-themed dashboard featuring chat consoles, database schema visualizers, dynamic table grids, and interactive charts.
+- **Auto-Visualization**: Suggests and renders appropriate charts (Bar, Line, Area, Pie, Scatter) based on query response schema.
+- **Strict SQL Security Sandbox**: Automatically validates generated SQL against unsafe commands (e.g., blocking `DROP`, `DELETE`, `UPDATE` keywords) and executes queries in read-only mode (`mode=ro`) to safeguard data integrity.
+- **Chat History with Favorites**: Persists conversation history locally and supports marking queries as favorites.
 
 ---
 
 ## 🛠️ Technology Stack
 
-### Frontend
-*   **Next.js 15** (App Router)
-*   **TypeScript**
-*   **Tailwind CSS v4**
-*   **shadcn/ui** primitives
-*   **TanStack Table v8** (React Table)
-*   **Framer Motion** (Micro-animations)
-*   **PapaParse** (Local CSV parser)
-*   **Axios** & **React Hook Form**
-
-### Backend
-*   **Node.js** & **Express**
-*   **TypeScript**
-*   **Multer** (Multipart file uploads)
-*   **OpenAI SDK** (with Gemini OpenAI-compatibility API endpoint support)
-*   **Zod** (Schema validation)
-*   **Nodemon** & **ts-node** (Hot-reloading)
+- **Frontend**: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, Zustand, Recharts, Framer Motion, and Lucide React.
+- **Backend**: Python FastAPI, SQLite, and the Google GenAI SDK / OpenAI SDK.
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-├── backend/                  # Node.js + Express TypeScript API
+├── backend/                  # FastAPI Backend API
+│   ├── app/                  # FastAPI Application Source
+│   │   ├── routers/          # API Routers (Upload, Query, History)
+│   │   ├── services/         # Core Services (LLM generation, Security validation, execution)
+│   │   ├── main.py           # Application Entry Point
+│   │   └── schemas.py        # Pydantic Schemas
+│   ├── .env.example
+│   ├── requirements.txt      # Python Dependencies
+│   └── package.json          # Node script wrapper for backend
+│
+├── frontend/                 # Next.js 16 Client App
 │   ├── src/
-│   │   ├── controllers/      # CSV import controller
-│   │   ├── routes/           # Routing for /api/csv
-│   │   ├── services/         # CSV processing & AI mapping services
-│   │   ├── middleware/       # Multer config & error handlers
-│   │   ├── types/            # CRM Lead and process metrics definitions
-│   │   ├── utils/            # Logger and custom AppError
-│   │   └── index.ts          # Server entry point
+│   │   ├── app/              # Next.js Page & Layout Router
+│   │   ├── components/       # Interface components (Sidebar, Console, RightPanel)
+│   │   └── hooks/            # Zustand State Stores
 │   ├── package.json
 │   └── tsconfig.json
 │
-├── frontend/                 # Next.js 15 App Router TypeScript app
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── layout.tsx    # Document wrappers, dark theme
-│   │   │   └── page.tsx      # Main application page governing step state router
-│   │   ├── components/       # UI Components
-│   │   │   ├── ui/           # shadcn buttons, cards, dialogs
-│   │   │   └── CSVImporter/  # Step components (Landing, Preview, Loading, Result)
-│   │   └── lib/
-│   │       └── api.ts        # Axios configuration
-│   ├── package.json
-│   └── tailwind.config.ts
-│
-├── LICENSE                   # MIT License
-├── package.json              # Workspace script definitions
-└── .gitignore                # Global git ignore configuration
+├── package.json              # Root script runner
+└── .gitignore
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Setup and Running
 
-### 1. Clone & Install Dependencies
-Run the installation command in the root directory to bootstrap both workspaces:
+### 1. Installation
+
+From the root directory, run:
 ```bash
 npm run install:all
 ```
+*Note: Make sure to also set up a Python virtual environment in the `backend` folder:*
+```bash
+cd backend
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-### 2. Configure Environment Variables
-Create a `.env` file in the `backend/` directory (you can copy [backend/.env.example](backend/.env.example)):
+### 2. Configuration
+
+Create a `.env` file in the `backend/` directory (you can copy `backend/.env.example` as a template):
 ```env
-PORT=5000
-NODE_ENV=development
-
-# LLM Providers: 'openai' | 'gemini' | 'heuristic' (local fallback)
+PORT=8000
+GEMINI_API_KEY=your_gemini_api_key
+OPENAI_API_KEY=your_openai_api_key
 LLM_PROVIDER=gemini
 LLM_MODEL=gemini-1.5-flash
-
-# API Credentials
-OPENAI_API_KEY=your_openai_api_key
-GEMINI_API_KEY=your_gemini_api_key
 ```
 
-### 3. Start Development Servers
-Run the development command from the root directory for both services:
+### 3. Run Development Servers
 
-Start the **Backend API** (Port 5000):
+From the root directory, start both the FastAPI backend and Next.js frontend:
 ```bash
+# Start backend on http://localhost:8000
 npm run dev:backend
-```
 
-Start the **Frontend App** (Port 3000):
-```bash
+# Start frontend on http://localhost:3000
 npm run dev:frontend
 ```
-
-Open [http://localhost:3000](http://localhost:3000) to view the application.
-
----
-
-## 📊 Target CRM Fields
-All parsed rows are standardized into this schema:
-*   `created_at`: Creation date (ISO 8601 string)
-*   `name`: Full name
-*   `email`: Email address
-*   `country_code`: Phone country prefix (e.g. `+1`, `+91`)
-*   `mobile_without_country_code`: Phone number digits (without spaces or country code)
-*   `company`: Company name
-*   `city`: City location
-*   `state`: State or Province
-*   `country`: Country name
-*   `lead_owner`: Assigned owner name
-*   `crm_status`: Lead status (e.g., `New`, `Qualified`)
-*   `crm_note`: Standardized notes
-*   `data_source`: Channel name (e.g. `CSV Import`)
-*   `possession_time`: Ownership duration details
-*   `description`: Unstructured row details summary
-
----
-
-## 📄 License
-This project is licensed under the terms of the [MIT License](LICENSE).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
