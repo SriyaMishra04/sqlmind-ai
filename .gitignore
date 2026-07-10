@@ -33,3 +33,14 @@ Thumbs.db
 
 # Uploads directory
 backend/uploads/
+
+# Python virtual environments & build artifacts
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Local databases & logs
+*.db
+*.sqlite
+backend/history.json

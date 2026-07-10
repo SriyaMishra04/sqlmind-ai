@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GrowEasy AI CSV Importer - CRM Lead Mapper",
-  description: "Intelligently parse, validate, and import CRM leads from CSV files using advanced mapping tools.",
+  title: "SQLMind AI - AI-Powered SQL Assistant",
+  description: "Upload any database (SQLite, CSV, Excel, or SQL dump) and let AI generate, validate, and execute SQL queries instantly.",
 };
 
 export default function RootLayout({
@@ -25,9 +25,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased bg-zinc-950 text-zinc-100`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-slate-50 text-gray-900`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">{children}</body>
+      <body className="min-h-full flex flex-col bg-slate-50 text-gray-900">{children}</body>
     </html>
   );
 }

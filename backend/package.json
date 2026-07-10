@@ -4,9 +4,9 @@
   "description": "Backend for GrowEasy AI CSV Importer",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts"
+    "build": "echo No build needed",
+    "start": ".venv\\Scripts\\python -m uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "dev": ".venv\\Scripts\\python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
   },
   "dependencies": {
     "cors": "^2.8.5",
